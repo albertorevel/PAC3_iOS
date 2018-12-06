@@ -10,7 +10,9 @@ import UIKit
 
 import WebKit
 
-class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate  {
+import Speech
+
+class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate, SFSpeechRecognizer  {
 
     
     @IBOutlet weak var webView: WKWebView!
