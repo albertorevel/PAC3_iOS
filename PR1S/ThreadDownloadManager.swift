@@ -57,7 +57,7 @@ class ThreadDownloadManager: NSObject {
             DispatchQueue.main.async(execute: {
                 [unowned self] in
                 
-                self.m_main?.AddLog(msg: "T##String")
+                self.m_main?.AddLog(msg: "\(url)")
                 self.m_main?.IncProgress()
                 
             })

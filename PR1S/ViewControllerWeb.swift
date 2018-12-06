@@ -119,14 +119,16 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     // BEGIN-CODE-UOC-5
     func IncProgress()
     {
-       
-        
+        // We make a call to the IncProgress() method in the html file loaded in WebView
+        let jsCallBack:String = "IncProgress()"
+        self.webView.evaluateJavaScript(jsCallBack, completionHandler: nil)
     }
     
     func AddLog(msg:String)
     {
-       NSLog("Hey hey ")
-        
+        // We make a call to the AddLog(msg) method in the html file loaded in WebView
+        let jsCallBack:String = "AddLog('\(msg)')"
+        self.webView.evaluateJavaScript(jsCallBack, completionHandler: nil)
     }
     // END-CODE-UOC-5
     
