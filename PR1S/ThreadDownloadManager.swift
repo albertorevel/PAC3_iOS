@@ -46,10 +46,21 @@ class ThreadDownloadManager: NSObject {
             
             let localStorageUrl = URL(fileURLWithPath: NSTemporaryDirectory().appending(fileName))
             
+            // We store downloaded content in local Storage
             try tData.write(to: localStorageUrl, options: .atomic)
+           
+            // We simulate some data process. We dot it with sleep() function because we want to
+            // block this thread.
+            sleep(5)
             
-            // We store downloaded content in local storage
-            NSLog("Downloaded: \(tData.hash)" )
+            // After this time, we execute two methods in main thread.
+            DispatchQueue.main.async(execute: {
+                [unowned self] in
+                
+                self.m_main?.AddLog(msg: "T##String")
+                self.m_main?.IncProgress()
+                
+            })
         }
         catch {
             print("Unexpected error: \(error).")

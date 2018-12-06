@@ -125,7 +125,7 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     
     func AddLog(msg:String)
     {
-       
+       NSLog("Hey hey ")
         
     }
     // END-CODE-UOC-5
