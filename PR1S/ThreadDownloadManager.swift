@@ -83,13 +83,14 @@ class ThreadDownloadManager: NSObject {
     
     func Play()
     {
-
+        NSLog("Play")
     }
     
     
     func Pause()
     {
         
+        NSLog("Pause")
 
         
         

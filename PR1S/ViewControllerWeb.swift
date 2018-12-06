@@ -101,18 +101,41 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     }
     
     
-    func webView(_ WebViewNews: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // BEGIN-CODE-UOC-6
         
+        let url:URL = navigationAction.request.url!
         
+        if (url.scheme?.lowercased()=="theorganization"){
+            
+            let function:String = url.host!
+            
+            switch function {
+            case "Play":
+                m_downloadManager.Play()
+                break;
+            case "Pause":
+                m_downloadManager.Pause()
+                break;
+            default:
+                NSLog("Html called a function named \(function) that isn't defined.")
+            }
+            
+            decisionHandler(.cancel)
+        }
         
+        else {
+            decisionHandler(.allow)
+        }
         
+        /*
+         
+         == PREGUNTA 6 ==
+         
+         
+         */
          // END-CODE-UOC-6
-        
-        
-        
-        return true
         
     }
 
