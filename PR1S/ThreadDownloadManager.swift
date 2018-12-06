@@ -83,23 +83,18 @@ class ThreadDownloadManager: NSObject {
     
     func Play()
     {
-        NSLog("Play")
+        self.m_pause = false
     }
     
     
     func Pause()
     {
-        
-        NSLog("Pause")
-
-        
-        
+         self.m_pause = true
     }
     
     func IsPause()->Bool
     {
-
-        return false;
+        return self.m_pause
     }
     
     
