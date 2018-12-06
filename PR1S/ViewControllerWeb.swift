@@ -12,7 +12,7 @@ import WebKit
 
 import Speech
 
-class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate, SFSpeechRecognizer  {
+class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate  {
 
     
     @IBOutlet weak var webView: WKWebView!
@@ -21,10 +21,15 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     
     // BEGIN-CODE-UOC-9
     
+    /*
     
+    En el viewDidLoad de ViewControllerWeb dins de BEGIN-CODEUOC-
+    9, END-CODE-UOC-9 afegir el necessari per inicialitzar les
+    propietats necessàries per a realitzar el reconeixement. Recordar
+    indicar en SFSpeechRecognizer que volem reconèixer en anglès fent
+    servir locale: Locale (identifier: "a-US")
     
-    
-    
+    */
     // END-CODE-UOC-9
     
     override func viewDidLoad() {
@@ -96,7 +101,13 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         
         
-        
+        /*
+         
+         Dins de BEGIN-CODE-UOC-10, END-CODE-UOC-10 Cal indicar que el
+         delegate de l’ speechRecognizer és el propi ViewControllerWeb i
+         sol·licitar permisos per accedir al SFSpeechRecognizer
+         
+         */
         
         // END-CODE-UOC-10
         
@@ -191,10 +202,16 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
      // BEGIN-CODE-UOC-11
     
     
-
+/*
+    implementem el
+    mètode startRecording encarregat de crear la recognitionTask que
+    finalment reconeixerà nostres ordres de veu: "Play" i "Stop".
+    IMPORTANT: L'única diferència respecte als apunts de la Wiki i al codi
+    del repositori és que per accedir a l'última paraula reconeguda s'ha de
+    realitzar:
+    let text = result.bestTranscription.segments.last?.substring
     
-    
-    
+  */
      // END-CODE-UOC-11
     
     
