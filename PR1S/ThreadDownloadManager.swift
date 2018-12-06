@@ -34,10 +34,26 @@ class ThreadDownloadManager: NSObject {
     func DownloadInternal(url:String)
     {
          // BEGIN-CODE-UOC-4
-     
-        
-        
-        
+    
+        // We download contents that are in [url]
+        var tData:NSData
+        do {
+            tData = try NSData(contentsOf: URL(string: url)!)
+            
+            // We read the file's name and we create the destination path
+            let urlArray = url.components(separatedBy: "/")
+            let fileName = urlArray.last ?? ""
+            
+            let localStorageUrl = URL(fileURLWithPath: NSTemporaryDirectory().appending(fileName))
+            
+            try tData.write(to: localStorageUrl, options: .atomic)
+            
+            // We store downloaded content in local storage
+            NSLog("Downloaded: \(tData.hash)" )
+        }
+        catch {
+            print("Unexpected error: \(error).")
+        }
          // END-CODE-UOC-4
         
         

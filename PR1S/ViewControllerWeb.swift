@@ -64,28 +64,28 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
             for urlString in list {
                 self.m_downloadManager.Download(url: urlString as! String)
             }
-            
-            /*
-            
-             == PREGUNTA 3 ==
-             
-             El mètode Download es crida des del fil principal i s'executa en aquest mateix fil.
-             En canvi, el mètode DownloadInternal no s'executarà des del fil principal.
-             
-             Al realitzar diferents crides al mètode Download, aquestes s'executen en aquest programa de
-             manera seqüencial entre elles; en el moment d'executar però, les crides fetes al mètode
-             DownloadInternal, s'estaran fent en un fil diferent, permetent la seva execució de manera
-             concurrent i sense produir cap espera al fil principal.
-             
-             Aquest comportament es deu a que quan es realitza una crida al mètode DownloadInternal
-             mitjançant un [perform(#selector(DownloadInternal), on: self.m_thread! ...], estem afegint
-             el mètode al fil [self.m_thread] i permetent la seva execució des d'aquest altre fil.
-            
-            */
-            
-        } catch {
+        }
+        catch {
             print("Unexpected error: \(error).")
         }
+        
+        /*
+         
+         == PREGUNTA 3 ==
+         
+         El mètode Download es crida des del fil principal i s'executa en aquest mateix fil.
+         En canvi, el mètode DownloadInternal no s'executarà des del fil principal.
+         
+         Al realitzar diferents crides al mètode Download, aquestes s'executen en aquest programa de
+         manera seqüencial entre elles; en el moment d'executar però, les crides fetes al mètode
+         DownloadInternal, s'estaran fent en un fil diferent, permetent la seva execució de manera
+         concurrent i sense produir cap espera al fil principal.
+         
+         Aquest comportament es deu a que quan es realitza una crida al mètode DownloadInternal
+         mitjançant un [perform(#selector(DownloadInternal), on: self.m_thread! ...], estem afegint
+         el mètode al fil [self.m_thread] i permetent la seva execució des d'aquest altre fil.
+         
+         */
         
         // END-CODE-UOC-3
         
