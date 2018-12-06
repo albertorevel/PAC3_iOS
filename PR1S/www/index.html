@@ -1,0 +1,164 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
+    
+    <style>
+    
+    .CView
+    {
+        position:absolute;
+        left:0px;
+        top:0px;
+        width:100%;
+        height:100%;
+        background-color:gray;
+    }
+    
+    .CTitleBar
+    {
+        position:absolute;
+        display:block;
+        left:0px;
+        top:0px;
+        width:100%;
+        height:90px;
+        background-color:#262a2a;
+        border-bottom:1px solid #5a6060;
+    }
+    
+    .CBody
+    {
+        position:absolute;
+        display:block;
+        left:0px;
+        top:90px;
+        width:100%;
+         height:100%;
+         background-color:#eee;
+        color:black;
+        margin:4px;
+        
+    }
+    
+    .CProgress
+    {
+        position:absolute;
+        display:block;
+        left:0px;
+        top:40px;
+        width:100%;
+        height:80px;
+        background-color:#353737;
+    }
+    
+    .CP
+    {
+        position:relative;
+        display:inline;
+        float:left;
+        width:9%;
+         background-color:#353737;
+        border:1px solid black;
+        height:80px;
+        
+    
+    }
+    
+    
+    </style>
+    
+    <script>
+        
+        var g_progress = 0;
+        var g_log = "";
+        
+        
+        function AddLog(msg)
+        {
+            g_log = msg + "<br />" + g_log;
+            var obj = document.getElementById("log");
+            obj.innerHTML = g_log;
+        }
+        
+        
+        function IncProgress()
+        {
+            g_progress++;
+            var i;
+            for(i=1;i<=g_progress;i++)
+            {
+                SetPos(i);
+            
+            }
+        }
+        
+        
+        function SetPos(number)
+        {
+            
+            var obj = document.getElementById("p"+number);
+            obj.style.backgroundColor = "#00ff00";
+        
+        
+        }
+    
+    
+    
+   
+function Play()
+{
+    
+    
+    window.location.href = "theorganization://Play";
+    
+}
+
+function Pause()
+{
+    
+    
+    window.location.href = "theorganization://Pause";
+    
+}
+
+
+
+    </script>
+    
+</head>
+
+<body>
+    
+<div id="view0" class="CView">
+    <div class="CTitleBar">
+      
+      <br/>
+      &nbsp;&nbsp;<a href="javascript:Play()"><img src="img/play.png" height="60px"/></a>
+      <a href="javascript:Pause()"><img src="img/pause.png" height="60px"/></a>
+   
+      
+    </div>
+    <div class="CBody">
+        <div class=CProgress">
+            <div id="p1"  class="CP"> </div>
+            <div id="p2"  class="CP"> </div>
+            <div id="p3"  class="CP"> </div>
+            <div id="p4"  class="CP"> </div>
+            <div id="p5"  class="CP"> </div>
+            
+            <div id="p6"  class="CP"> </div>
+            <div id="p7"  class="CP"> </div>
+            <div id="p8"  class="CP"> </div>
+            <div id="p9"  class="CP"> </div>
+            <div id="p10" class="CP"> </div>
+        </div>
+        <div id="log">
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
