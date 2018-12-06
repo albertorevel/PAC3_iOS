@@ -29,12 +29,23 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-     // BEGIN-CODE-UOC-2
-      
+        // BEGIN-CODE-UOC-2
+        // We define this ViewController as the WebView's delegate
+        self.webView?.uiDelegate = self
+        self.webView?.navigationDelegate = self
         
+        // We adapt the WebView in order to make the web's behaviour like a native app.
+        self.webView?.scrollView.bounces = false
+        self.webView?.scrollView.isScrollEnabled = false
         
+        // We load index.html
+        let htmlFile:String = Bundle.main.path(forResource: "index",
+                                               ofType: "html", inDirectory: "www")!
+        let url:URL = URL(fileURLWithPath: htmlFile)
+        let request:URLRequest = URLRequest(url: url)
+        self.webView?.load(request)
         
-     // END-CODE-UOC-2
+        // END-CODE-UOC-2
         
         
         self.m_downloadManager.m_main = self
@@ -42,7 +53,7 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         
         // BEGIN-CODE-UOC-3
-      
+        
         
         
         
