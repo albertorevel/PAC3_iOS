@@ -76,12 +76,12 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
          El mètode Download es crida des del fil principal i s'executa en aquest mateix fil.
          En canvi, el mètode DownloadInternal no s'executarà des del fil principal.
          
-         Al realitzar diferents crides al mètode Download, aquestes s'executen en aquest programa de
+         En realitzar diferents crides al mètode Download, aquestes s'executen en aquest programa de
          manera seqüencial entre elles; en el moment d'executar però, les crides fetes al mètode
          DownloadInternal, s'estaran fent en un fil diferent, permetent la seva execució de manera
          concurrent i sense produir cap espera al fil principal.
          
-         Aquest comportament es deu a que quan es realitza una crida al mètode DownloadInternal
+         Aquest comportament es deu al fet de que quan es realitza una crida al mètode DownloadInternal
          mitjançant un [perform(#selector(DownloadInternal), on: self.m_thread! ...], estem afegint
          el mètode al fil [self.m_thread] i permetent la seva execució des d'aquest altre fil.
          
@@ -133,6 +133,37 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
          
          == PREGUNTA 6 ==
          
+         Per començar, hauríem de traure la crida al mètode [self.m_downloadManager.Start()], que ara mateix
+         es troba entre els comentaris END-CODE-UOC-2 i BEGIN-CODE-UOC-3 dins del mètode [viewDidLoad()] de
+         ViewControllerWeb. També hauríem de traure el codi que ve a continuació, tot el que es troba entre
+         BEGIN-UOC-CODE-3 i END-UOC-CODE-3. És a dir, trauríem la crida al mètode Start i als mètodes Download
+         del m_downloadManager.
+         Així evitaríem que comencés automàticament l'execució al carregar el ViewControllerWeb.
+         
+         Per permetre l'execució del codi, hauríem d'afegir una funció que es podria dir [startDownloads()]
+         dins d'aquest ViewControllerWeb, on hi afegiríem totes les línies de codi que hem tret. Aquest mètode
+         es cridaria dins d'aquesta funció [webView()], quan arribi un nom de funció "Start", com es fa ara
+         mateix amb els mètodes "Play" i "Pause".
+         
+         Aquesta funció es cridaria des del web "index.html", afegint una funció [Start()] semblants a les
+         funcions [Play()] i [Pause()]:
+         
+            function Start()
+             {
+                window.location.href = "theorganization://Start"
+             }
+         
+         Per tal de cridar aquesta funció en el moment que arribi l'Event "OnLoad", podríem afegir a la part
+         JavaScript del web la següent línia de codi, que farà la crida a la funció [Start()] que es mostra a
+         dalt d'aquestes línies.
+         
+            window.onload = Start;
+         
+         Amb aquests canvis, simplement movem un bloc de línies de codi a una funció. En cas que el cost de
+         llegir el JSON que conté les URL de descàrrega trigués més temps, o si s'haguessin de fer més
+         operacions abans de cridar al mètode [Download()], i no es volgués esperar a l'Event OnLoad del HTML,
+         es podrien fer les operacions de lectura del JSON i desar la informació dins d'un array del que
+         llegiríem un cop cridada la funció [startDownloads()].
          
          */
          // END-CODE-UOC-6
