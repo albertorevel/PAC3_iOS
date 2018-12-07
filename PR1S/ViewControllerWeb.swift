@@ -12,7 +12,7 @@ import WebKit
 
 import Speech
 
-class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate  {
+class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegate, WKUIDelegate, SFSpeechRecognizerDelegate  {
 
     
     @IBOutlet weak var webView: WKWebView!
@@ -20,6 +20,13 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     var m_downloadManager:ThreadDownloadManager = ThreadDownloadManager()
     
     // BEGIN-CODE-UOC-9
+    
+    // *************** Speech recognizer
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private let audioEngine = AVAudioEngine()
+    private var m_audioAuthorized = false
     
     /*
     
@@ -99,6 +106,21 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         // BEGIN-CODE-UOC-10
         
+        speechRecognizer.delegate = self
+        
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+            OperationQueue.main.addOperation {
+                switch authStatus {
+                case .authorized:
+                    self.m_audioAuthorized = true
+                    try! self.startRecording()
+                    
+                default:
+                    self.m_audioAuthorized = false
+                    NSLog("Audio not authorized. AuthStatus = \(authStatus)")
+                }
+            }
+        }
         
         
         /*
@@ -201,6 +223,65 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     
      // BEGIN-CODE-UOC-11
     
+    func startRecording() throws
+    {
+        
+        // Cancel the previous task if it's running.
+        if let recognitionTask = recognitionTask {
+            recognitionTask.cancel()
+            self.recognitionTask = nil
+        }
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(AVAudioSessionCategoryRecord)
+        try audioSession.setMode(AVAudioSessionModeMeasurement)
+        try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+        
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        
+        /*
+         guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
+         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+         */
+        
+        let inputNode = audioEngine.inputNode
+        
+        // Configure request so that results are returned before audio recording is finished
+        recognitionRequest?.shouldReportPartialResults = true
+        
+        // A recognition task represents a speech recognition session.
+        // We keep a reference to the task so that it can be cancelled.
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest!) { result, error in
+            var isFinal = false
+            
+            if let result = result {
+                let text = result.bestTranscription.segments.last?.substring
+                NSLog("Voice recognition: \(text ?? "")")
+                isFinal = result.isFinal
+            }
+            
+            if error != nil || isFinal {
+                self.audioEngine.stop()
+                inputNode?.removeTap(onBus: 0)
+                
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+                
+                self.performSelector(onMainThread: #selector(ViewControllerWeb.startRecording), with: nil, waitUntilDone: false)
+            }
+        }
+        
+        let recordingFormat = inputNode?.outputFormat(forBus: 0)
+        inputNode?.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        
+        try audioEngine.start()
+
+    }
     
 /*
     implementem el
