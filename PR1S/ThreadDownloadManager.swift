@@ -82,16 +82,16 @@ class ThreadDownloadManager: NSObject {
          == PREGUNTA 8 ==
          
          Si haguéssim optat per crear un Thread per petició sense usar cap tècnica de seqüenciació o
-         ordenació de la descàrrega, ens haguèssim pogut trobar que els fitxers no es baixen en el mateix
-         ordre que actualment. També podrien baixar uns quants de cop, o baixar poc a poc però la informació
-         al usuari podria arribar de cop.
+         ordenació de la descàrrega, haguéssim pogut trobar que els fitxers no es baixen en el mateix
+         ordre que actualment. També podrien baixar uns quants de cop, o baixar a poc a poc però la informació
+         a l'usuari podria arribar de cop.
          
          Depenent de com es gestioni la descàrrega (a baix nivell, amb [NSData(contentsof:)]), podríem trobar
-         problemes si ho fa de manera no atòmitca. L'accés al emmagatzematge local es realitza ja de manera
+         problemes si ho fa de manera no atòmica. L'accés a l'emmagatzematge local es realitza ja de manera
          atòmica en aquest codi així que per aquesta banda no hi hauria problemes.
          
          Per últim, si les operacions d'anàlisi comptessin amb recursos i variables compartides, podria
-         haver-hi errors a la hora de realitzar aquestes operacions.
+         haver-hi errors a l'hora de realitzar aquestes operacions.
          
          */
 
