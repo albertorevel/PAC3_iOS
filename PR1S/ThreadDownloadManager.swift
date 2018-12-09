@@ -105,6 +105,7 @@ class ThreadDownloadManager: NSObject {
     // We set the [m_pause] variable to true or false, or we read it. We use the lock ir order to protect
     // the access to the variable, avoiding a non correct concurrent access.
     
+    // We resume the download process
     func Play()
     {
         self.theLock.lock()
@@ -112,6 +113,7 @@ class ThreadDownloadManager: NSObject {
         self.theLock.unlock()
     }
     
+    // We pause the download process
     func Pause()
     {
         self.theLock.lock()
@@ -119,6 +121,7 @@ class ThreadDownloadManager: NSObject {
         self.theLock.unlock()
     }
     
+    // We check if the download process is paused
     func IsPause()->Bool
     {
         self.theLock.lock()

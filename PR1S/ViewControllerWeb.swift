@@ -28,8 +28,6 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     private let audioEngine = AVAudioEngine()
     private var m_audioAuthorized = false
     
-    
-    
     // END-CODE-UOC-9
     
     override func viewDidLoad() {
@@ -128,12 +126,10 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         let url:URL = navigationAction.request.url!
         
-        // If it's an action that we have to handle, we search the function's name
         if (url.scheme?.lowercased()=="theorganization"){
             
             let function:String = url.host!
             
-            // We check the function's name and we launch the requested action
             switch function {
             case "Play":
                 m_downloadManager.Play()
@@ -147,7 +143,7 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
             
             decisionHandler(.cancel)
         }
-        // If it isn't an action that we have to handle, we allow the request.
+        
         else {
             decisionHandler(.allow)
         }
@@ -220,12 +216,14 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
             self.recognitionTask = nil
         }
         
+        // We set audioSession properties 
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(AVAudioSessionCategoryRecord)
         try audioSession.setMode(AVAudioSessionModeMeasurement)
         try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
         
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+      
         let inputNode = audioEngine.inputNode
         
         // Configure request so that results are returned before audio recording is finished
@@ -261,8 +259,11 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
                 
                 // If we receive the variable isFinal from result or there's an error, we relaunch the task.
                 if error != nil || isFinal {
+                    self.audioEngine.stop()
+                    inputNode?.removeTap(onBus: 0)
                     
-                    self.stopRecording();
+                    self.recognitionRequest = nil
+                    self.recognitionTask = nil
                     
                     self.performSelector(onMainThread: #selector(ViewControllerWeb.startRecording), with: nil, waitUntilDone: false)
                 }
@@ -279,16 +280,6 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         try audioEngine.start()
 
-    }
-    
-    // This function stops the recognition task
-    func stopRecording() {
-        
-        self.audioEngine.stop()
-        inputNode?.removeTap(onBus: 0)
-        
-        self.recognitionRequest = nil
-        self.recognitionTask = nil
     }
     
      // END-CODE-UOC-11
