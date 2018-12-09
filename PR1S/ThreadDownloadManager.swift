@@ -102,6 +102,8 @@ class ThreadDownloadManager: NSObject {
     
     
     // BEGIN-CODE-UOC-7
+    // We set the [m_pause] variable to true or false, or we read it. We use the lock ir order to protect
+    // the access to the variable, avoiding a non correct concurrent access.
     
     func Play()
     {
@@ -109,7 +111,6 @@ class ThreadDownloadManager: NSObject {
         self.m_pause = false
         self.theLock.unlock()
     }
-    
     
     func Pause()
     {

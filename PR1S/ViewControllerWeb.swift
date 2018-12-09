@@ -21,22 +21,15 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
     
     // BEGIN-CODE-UOC-9
     
-    // *************** Speech recognizer
+    // We initialize all the properties that we need and we set english (US) as the recognizer's language.
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     private var m_audioAuthorized = false
     
-    /*
     
-    En el viewDidLoad de ViewControllerWeb dins de BEGIN-CODEUOC-
-    9, END-CODE-UOC-9 afegir el necessari per inicialitzar les
-    propietats necessàries per a realitzar el reconeixement. Recordar
-    indicar en SFSpeechRecognizer que volem reconèixer en anglès fent
-    servir locale: Locale (identifier: "a-US")
     
-    */
     // END-CODE-UOC-9
     
     override func viewDidLoad() {
@@ -106,8 +99,10 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         // BEGIN-CODE-UOC-10
         
+        // We mark this ViewController as the delegate of the speech recognizer.
         speechRecognizer.delegate = self
         
+        // We request the authorization to be able to use the device's microphone.
         SFSpeechRecognizer.requestAuthorization { authStatus in
             OperationQueue.main.addOperation {
                 switch authStatus {
@@ -122,15 +117,6 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
             }
         }
         
-        
-        /*
-         
-         Dins de BEGIN-CODE-UOC-10, END-CODE-UOC-10 Cal indicar que el
-         delegate de l’ speechRecognizer és el propi ViewControllerWeb i
-         sol·licitar permisos per accedir al SFSpeechRecognizer
-         
-         */
-        
         // END-CODE-UOC-10
         
     }
@@ -142,10 +128,12 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         
         let url:URL = navigationAction.request.url!
         
+        // If it's an action that we have to handle, we search the function's name
         if (url.scheme?.lowercased()=="theorganization"){
             
             let function:String = url.host!
             
+            // We check the function's name and we launch the requested action
             switch function {
             case "Play":
                 m_downloadManager.Play()
@@ -159,7 +147,7 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
             
             decisionHandler(.cancel)
         }
-        
+        // If it isn't an action that we have to handle, we allow the request.
         else {
             decisionHandler(.allow)
         }
@@ -238,12 +226,6 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
         
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        
-        /*
-         guard let inputNode = audioEngine.inputNode else { fatalError("Audio engine has no input node") }
-         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
-         */
-        
         let inputNode = audioEngine.inputNode
         
         // Configure request so that results are returned before audio recording is finished
@@ -254,20 +236,36 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest!) { result, error in
             var isFinal = false
             
-            if let result = result {
-                let text = result.bestTranscription.segments.last?.substring
-                NSLog("Voice recognition: \(text ?? "")")
-                isFinal = result.isFinal
-            }
+            // If result is nil, and the recognizer could not detect any result, an error will be marked.
+            if (result != nil) {
+                
+                if let result = result {
             
-            if error != nil || isFinal {
-                self.audioEngine.stop()
-                inputNode?.removeTap(onBus: 0)
+                    // We check if the recognised text it's a known action or no,
+                    // launching this action if it correspond.
+                    if let text = result.bestTranscription.segments.last?.substring {
+                        switch text.lowercased() {
+                        case "play":
+                            self.m_downloadManager.Play()
+                            break;
+                        case "pause":
+                            self.m_downloadManager.Pause()
+                            break;
+                        default:
+                            NSLog("Voice recognition (not found): \(text).")
+                        }
+                    }
+                    
+                    isFinal = result.isFinal
+                }
                 
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
-                
-                self.performSelector(onMainThread: #selector(ViewControllerWeb.startRecording), with: nil, waitUntilDone: false)
+                // If we receive the variable isFinal from result or there's an error, we relaunch the task.
+                if error != nil || isFinal {
+                    
+                    self.stopRecording();
+                    
+                    self.performSelector(onMainThread: #selector(ViewControllerWeb.startRecording), with: nil, waitUntilDone: false)
+                }
             }
         }
         
@@ -283,16 +281,16 @@ class ViewControllerWeb: UIViewController, UIWebViewDelegate,WKNavigationDelegat
 
     }
     
-/*
-    implementem el
-    mètode startRecording encarregat de crear la recognitionTask que
-    finalment reconeixerà nostres ordres de veu: "Play" i "Stop".
-    IMPORTANT: L'única diferència respecte als apunts de la Wiki i al codi
-    del repositori és que per accedir a l'última paraula reconeguda s'ha de
-    realitzar:
-    let text = result.bestTranscription.segments.last?.substring
+    // This function stops the recognition task
+    func stopRecording() {
+        
+        self.audioEngine.stop()
+        inputNode?.removeTap(onBus: 0)
+        
+        self.recognitionRequest = nil
+        self.recognitionTask = nil
+    }
     
-  */
      // END-CODE-UOC-11
     
     
